@@ -23,7 +23,7 @@ jobs:
         ssh -vvv -o StrictHostKeyChecking=no iamoros@api.ivanamoros.com -p 2222 << 'EOF'
         cd /home/iamoros/back_port/
         git pull origin master
-        source /home/iamoros/env/bin/activate
+        source /home/iamoros/back_port/env/bin/activate
         pip install -r requirements.txt
         python3 manage.py migrate
         sudo systemctl restart gunicorn
