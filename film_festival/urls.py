@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import FilmsToWatchList, FilmsWatchedList, RatingCreate, IncreaseUpVotes, MarkAsWatched, UserRatedFilmsList, UserUpvotedFilmsList, GenreList, DeleteProposedFilm, DeleteVote
+from .views import FilmsToWatchList, FilmsWatchedList, RatingCreate, IncreaseUpVotes, MarkAsWatched, UserRatedFilmsList, UserUpvotedFilmsList, GenreList, DeleteProposedFilm, DeleteVote, EventCreateList, ProposeFilmView, EventFilmUpVote, DeleteEventFilmProposal, AdminEventDetail
 
 
 urlpatterns = [
@@ -19,4 +19,11 @@ urlpatterns = [
     
     path('user-rated-films/', UserRatedFilmsList.as_view()),
     path('create-rating/<int:film_id>/', RatingCreate.as_view()),
+
+    path('events/', EventCreateList.as_view(), name='events'),
+    path('events/<int:event_id>/', AdminEventDetail.as_view(), name='event-detail'),
+    path('events/<int:event_id>/propose-film/', ProposeFilmView.as_view(), name='propose-film'),
+    path('events/upvote/<int:event_film_id>/', EventFilmUpVote.as_view(), name='event-film-upvote'),
+    path('events/delete-proposed-film/<int:event_film_id>/', DeleteEventFilmProposal.as_view(), name='delete-event-film-proposal'),
+
 ]

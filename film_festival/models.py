@@ -64,12 +64,43 @@ class Rating(models.Model):
     def __str__(self):
         return self.film.tittle + ": " + str(self.stars)
     
+class Event(models.Model):
+    title = models.CharField(max_length=250)
+    description = models.TextField(max_length=1000)
+    date = models.DateField()
+    meeting_hour = models.TimeField()
+    start_hour = models.TimeField()
+    allow_proposals = models.BooleanField(default=True)
+    watched = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="created_events")
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
-# class Comment(models.Model):
-#     film = models.ForeignKey(
-#         Film,
-#         on_delete=models.CASCADE,
-#     )
-#     text = models.CharField(max_length=250)
-#     updated = models.DateTimeField(auto_now=True)
-#     created = models.DateTimeField(auto_now_add=True)
+    proposed_films = models.ManyToManyField('Film', through='EventFilm', related_name='events')
+
+    def __str__(self):
+        return f"{self.title} ({self.date})"
+
+class EventFilm(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    film = models.ForeignKey(Film, on_delete=models.CASCADE)
+    proposed_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    upvote_count = models.PositiveIntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('event', 'film')
+
+    def __str__(self):
+        return f"{self.film.tittle} @ {self.event.title}"
+    
+class EventFilmUpvote(models.Model):
+    event_film = models.ForeignKey(EventFilm, on_delete=models.CASCADE, related_name='upvotes')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('event_film', 'user')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.event_film.film.tittle}"
